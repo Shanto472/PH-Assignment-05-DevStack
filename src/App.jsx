@@ -145,34 +145,53 @@ function Technologies() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetch('/technologies.json')
-      .then(response => {
+    const controller = new AbortController();
+
+    const loadTechnologies = async () => {
+      try {
+        const [response] = await Promise.all([
+          fetch('/technologies.json', { signal: controller.signal }),
+          new Promise(resolve => setTimeout(resolve, 650)),
+        ]);
         if (!response.ok) throw new Error('Unable to load technologies.');
-        return response.json();
-      })
-      .then(setTechnologies)
-      .catch(error => setError(error.message))
-      .finally(() => setLoading(false));
+        setTechnologies(await response.json());
+      } catch (error) {
+        if (error.name !== 'AbortError') setError(error.message);
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+
+    loadTechnologies();
+    return () => controller.abort();
   }, []);
 
   const addTechnology = tech => {
     if (selected.some(item => item.id === tech.id)) {
-      toast.warning(`${tech.name} is already in your stack.`);
+      toast.warning(`${tech.name} is already in your stack.`, {
+        toastId: `duplicate-${tech.id}`,
+      });
       return;
     }
     setSelected(current => [...current, tech]);
-    toast.success(`${tech.name} added to your stack!`);
+    toast.success(`${tech.name} added to your stack!`, {
+      toastId: `added-${tech.id}`,
+    });
   };
 
   const removeTechnology = tech => {
     setSelected(current => current.filter(item => item.id !== tech.id));
-    toast.info(`${tech.name} removed from your stack.`);
+    toast.info(`${tech.name} removed from your stack.`, {
+      toastId: `removed-${tech.id}`,
+    });
   };
 
   const removeAll = () => {
     if (!selected.length) return;
     setSelected([]);
-    toast.info('All technologies removed from your stack.');
+    toast.info('All technologies removed from your stack.', {
+      toastId: 'removed-all',
+    });
   };
 
   return (
