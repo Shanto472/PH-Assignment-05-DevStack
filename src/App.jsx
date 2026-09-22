@@ -67,13 +67,7 @@ function Hero() {
         </div>
       </div>
 
-      <div className="hero-visual" role="img" aria-label="Colorful layered development stack illustration">
-        <div className="visual-glow"></div>
-        <div className="stack-layer layer-top"><span>&lt;/&gt;</span><i></i><i></i><i></i></div>
-        <div className="stack-layer layer-middle"><span>JS</span><i></i><i></i><i></i></div>
-        <div className="stack-layer layer-bottom"><span>API</span><i></i><i></i><i></i></div>
-        <div className="stack-base"></div>
-      </div>
+      <img className="hero-image" src="/banner-stack.png" alt="Futuristic layered development technology stack" />
     </section>
   );
 }
