@@ -204,6 +204,44 @@ function Technologies() {
   );
 }
 
+const faqItems = [
+  { question: 'Where can I deploy this project?', answer: 'You can deploy Dev Stack on platforms such as Netlify, Vercel, Cloudflare Pages, or any static hosting service that supports Vite applications.' },
+  { question: 'Can I use JavaScript instead of TypeScript?', answer: 'Absolutely. This project uses modern JavaScript and React, so TypeScript is optional rather than required.' },
+  { question: 'Can the brand colors and logo be customized?', answer: 'Yes. The shared gradient is defined once in CSS, making it easy to re-theme the brand name, highlighted text, and primary buttons together.' },
+  { question: 'Where do the technology icons come from?', answer: 'The technology data uses clean SVG icons from the Devicon CDN. You can replace any URL in the local technologies JSON file.' },
+];
+
+function FAQ() {
+  const [openIndex, setOpenIndex] = useState(0);
+
+  return (
+    <section className="faq-section" id="faq">
+      <div className="faq-inner">
+        <div className="faq-heading">
+          <span>NEED TO KNOW</span>
+          <h2>Questions, <em>answered.</em></h2>
+          <p>Quick answers about using and customizing Dev Stack.</p>
+        </div>
+        <div className="faq-list">
+          {faqItems.map((item, index) => {
+            const isOpen = openIndex === index;
+            return (
+              <article className={isOpen ? 'faq-item open' : 'faq-item'} key={item.question}>
+                <button onClick={() => setOpenIndex(isOpen ? -1 : index)} aria-expanded={isOpen}>
+                  <span className="faq-number">0{index + 1}</span>
+                  <strong>{item.question}</strong>
+                  <span className="faq-toggle">{isOpen ? '−' : '+'}</span>
+                </button>
+                <div className="faq-answer"><p>{item.answer}</p></div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function FooterLinks({ title, links }) {
   return (
     <div className="footer-links">
@@ -246,7 +284,7 @@ export default function App() {
   return (
     <>
       <Navbar />
-      <main><Hero /><Technologies /></main>
+      <main><Hero /><Technologies /><FAQ /></main>
       <Footer />
     </>
   );
