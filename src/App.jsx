@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Menu, Star } from 'lucide-react';
+import { Menu, Star, X } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const navItems = ['Home', 'Technologies', 'Projects', 'About', 'Contact'];
 
@@ -77,7 +78,7 @@ function Hero() {
   );
 }
 
-function TechCard({ tech }) {
+function TechCard({ tech, isAdded, onAdd }) {
   return (
     <article className="tech-card">
       <div className="card-top">
@@ -91,13 +92,55 @@ function TechCard({ tech }) {
         <span>{tech.difficulty}</span>
         <span className="rating"><Star size={13} fill="currentColor" /> {tech.rating}</span>
       </div>
-      <button className="add-button">Add to Stack</button>
+      <button
+        className={isAdded ? 'add-button added' : 'add-button'}
+        onClick={() => onAdd(tech)}
+        aria-disabled={isAdded}
+      >
+        {isAdded ? '✓ Added to Stack' : 'Add to Stack'}
+      </button>
     </article>
+  );
+}
+
+function StackPanel({ selected, onRemove, onRemoveAll }) {
+  return (
+    <aside className="stack-panel">
+      <h3>Your Stack</h3>
+      <p className="selected-count">
+        {selected.length} {selected.length === 1 ? 'Technology' : 'Technologies'} Selected
+      </p>
+
+      {selected.length === 0 ? (
+        <div className="empty-state">
+          <div>+</div>
+          <strong>Your stack is empty</strong>
+          <span>Add technologies to build your ideal stack.</span>
+        </div>
+      ) : (
+        <div className="stack-list">
+          {selected.map(tech => (
+            <div className="stack-item" key={tech.id}>
+              <img src={tech.icon} alt="" />
+              <div><strong>{tech.name}</strong><span>{tech.category}</span></div>
+              <button onClick={() => onRemove(tech)} aria-label={`Remove ${tech.name}`}>
+                <X size={18} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <button className="remove-all" disabled={!selected.length} onClick={onRemoveAll}>
+        Remove All
+      </button>
+    </aside>
   );
 }
 
 function Technologies() {
   const [technologies, setTechnologies] = useState([]);
+  const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -112,6 +155,26 @@ function Technologies() {
       .finally(() => setLoading(false));
   }, []);
 
+  const addTechnology = tech => {
+    if (selected.some(item => item.id === tech.id)) {
+      toast.warning(`${tech.name} is already in your stack.`);
+      return;
+    }
+    setSelected(current => [...current, tech]);
+    toast.success(`${tech.name} added to your stack!`);
+  };
+
+  const removeTechnology = tech => {
+    setSelected(current => current.filter(item => item.id !== tech.id));
+    toast.info(`${tech.name} removed from your stack.`);
+  };
+
+  const removeAll = () => {
+    if (!selected.length) return;
+    setSelected([]);
+    toast.info('All technologies removed from your stack.');
+  };
+
   return (
     <section className="technologies section" id="technologies">
       <div className="section-heading">
@@ -123,8 +186,18 @@ function Technologies() {
       ) : error ? (
         <div className="error">{error}</div>
       ) : (
-        <div className="card-grid">
-          {technologies.map(tech => <TechCard tech={tech} key={tech.id} />)}
+        <div className="catalog-layout">
+          <div className="card-grid">
+            {technologies.map(tech => (
+              <TechCard
+                tech={tech}
+                key={tech.id}
+                isAdded={selected.some(item => item.id === tech.id)}
+                onAdd={addTechnology}
+              />
+            ))}
+          </div>
+          <StackPanel selected={selected} onRemove={removeTechnology} onRemoveAll={removeAll} />
         </div>
       )}
     </section>
