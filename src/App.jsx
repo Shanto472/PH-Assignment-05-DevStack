@@ -51,13 +51,37 @@ function Navbar() {
   );
 }
 
+function Hero() {
+  return (
+    <section className="hero" id="home">
+      <div className="hero-copy">
+        <h1>Build Your Ideal <span>Development Stack</span></h1>
+        <p>
+          Explore frontend, backend, database, and tooling options, compare them
+          side by side, and put together the stack that fits your next project.
+        </p>
+        <div className="hero-actions">
+          <a className="primary" href="#technologies">Explore Technologies</a>
+          <a className="secondary" href="#about">Learn More</a>
+        </div>
+      </div>
+
+      <div className="hero-visual" role="img" aria-label="Colorful layered development stack illustration">
+        <div className="visual-glow"></div>
+        <div className="stack-layer layer-top"><span>&lt;/&gt;</span><i></i><i></i><i></i></div>
+        <div className="stack-layer layer-middle"><span>JS</span><i></i><i></i><i></i></div>
+        <div className="stack-layer layer-bottom"><span>API</span><i></i><i></i><i></i></div>
+        <div className="stack-base"></div>
+      </div>
+    </section>
+  );
+}
+
 export default function App() {
   return (
     <>
       <Navbar />
-      <main className="navbar-preview" id="home">
-        <p>Dev Stack</p>
-      </main>
+      <main><Hero /></main>
     </>
   );
 }
