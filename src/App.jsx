@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Menu } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Menu, Star } from 'lucide-react';
 
 const navItems = ['Home', 'Technologies', 'Projects', 'About', 'Contact'];
 
@@ -77,11 +77,65 @@ function Hero() {
   );
 }
 
+function TechCard({ tech }) {
+  return (
+    <article className="tech-card">
+      <div className="card-top">
+        <img src={tech.icon} alt={`${tech.name} logo`} />
+        <span className="badge">{tech.badge}</span>
+      </div>
+      <h3>{tech.name}</h3>
+      <p>{tech.description}</p>
+      <div className="meta">
+        <span>{tech.category}</span>
+        <span>{tech.difficulty}</span>
+        <span className="rating"><Star size={13} fill="currentColor" /> {tech.rating}</span>
+      </div>
+      <button className="add-button">Add to Stack</button>
+    </article>
+  );
+}
+
+function Technologies() {
+  const [technologies, setTechnologies] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetch('/technologies.json')
+      .then(response => {
+        if (!response.ok) throw new Error('Unable to load technologies.');
+        return response.json();
+      })
+      .then(setTechnologies)
+      .catch(error => setError(error.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <section className="technologies section" id="technologies">
+      <div className="section-heading">
+        <h2>Explore the <span>Technologies</span></h2>
+        <p>Pick the right technologies to build your ideal stack.</p>
+      </div>
+      {loading ? (
+        <div className="loading"><span></span>Loading technologies...</div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : (
+        <div className="card-grid">
+          {technologies.map(tech => <TechCard tech={tech} key={tech.id} />)}
+        </div>
+      )}
+    </section>
+  );
+}
+
 export default function App() {
   return (
     <>
       <Navbar />
-      <main><Hero /></main>
+      <main><Hero /><Technologies /></main>
     </>
   );
 }
