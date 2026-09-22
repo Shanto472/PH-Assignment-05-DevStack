@@ -1,0 +1,21 @@
+{
+  "name": "dev-stack-builder",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "vite": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-toastify": "latest",
+    "lucide-react": "latest"
+  },
+  "devDependencies": {}
+}
